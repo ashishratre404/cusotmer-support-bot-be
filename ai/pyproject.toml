@@ -1,0 +1,15 @@
+[project]
+name = "ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.11.*"
+dependencies = [
+    "chromadb==0.4.24",
+    "fastapi>=0.116.1",
+    "langchain>=0.2,<0.3",
+    "langchain-community>=0.2,<0.3",
+    "langchain-openai>=0.1.25",
+    "python-dotenv>=1.1.1",
+    "uvicorn[standard]>=0.35.0",
+]
