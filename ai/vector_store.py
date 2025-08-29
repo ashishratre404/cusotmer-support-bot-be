@@ -37,6 +37,29 @@ def similarity_search(tenant_id: str, query: str, k: int = 5):
     store = _store_for_tenant(tenant_id)
     return store.similarity_search(query, k=k)
 
+def similarity_search_with_threshold(tenant_id: str, query: str, k: int = 8, min_score: float = 0.3):
+    """
+    Returns only (doc, score) pairs where score >= min_score.
+    Note: Chroma returns smaller distance = more similar if using cosine distance.
+    LangChain normalizes to 'score' where higher is better for some stores,
+    but Chroma via LC typically returns distances. We'll invert if needed.
+
+    We’ll use the LC wrapper’s API:
+      store.similarity_search_with_score returns (Document, score)
+    For Chroma, score is distance (lower=better). We convert to 'sim' = 1 - distance.
+    """
+    store = _store_for_tenant(tenant_id)
+    results = store.similarity_search_with_score(query, k=k)
+    filtered = []
+    for doc, score in results:
+        # 'score' from Chroma is distance in [0, 2] for cosine. Convert to similarity.
+        # A common quick mapping is sim = 1 - distance (approx). Clamp to [0,1].
+        sim = max(0.0, min(1.0, 1.0 - float(score)))
+        if sim >= min_score:
+            # stash similarity so caller can decide display
+            doc.metadata = {**(doc.metadata or {}), "_similarity": round(sim, 3)}
+            filtered.append((doc, sim))
+    return filtered
 
 def peek(tenant_id: str, limit: int = 5):
     """
