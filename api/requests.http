@@ -1,0 +1,32 @@
+### Node health
+GET http://127.0.0.1:5050/health
+
+### AI health via proxy
+GET http://127.0.0.1:5050/api/ai/health
+
+### Ingest sample docs
+POST http://127.0.0.1:5050/api/ai/ingest
+Content-Type: application/json
+
+{
+  "tenant_id": "demo",
+  "items": [
+    { "page_content": "LangChain is a framework for building LLM applications.", "metadata": {"source": "kb", "topic": "langchain"} },
+    { "page_content": "Chroma is an open-source embedding database.", "metadata": {"source": "kb", "topic": "chroma"} }
+  ]
+}
+
+### Query
+POST http://127.0.0.1:5050/api/ai/query
+Content-Type: application/json
+
+{
+  "tenant_id": "demo",
+  "query": "What is LangChain?",
+  "k": 3
+}
+
+### Peek
+GET http://127.0.0.1:5050/api/ai/debug/peek?tenant_id=demo&limit=3
+
+
