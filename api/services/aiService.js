@@ -2,6 +2,11 @@ const axios = require("axios");
 
 const AI_BASE_URL = process.env.AI_BASE_URL || "http://127.0.0.1:8001";
 
+exports.health = async () => {
+  const res = await axios.get(`${AI_BASE_URL}/health`);
+  return res.data;
+};
+
 exports.ingest = async (body) => {
   const res = await axios.post(`${AI_BASE_URL}/ingest`, body);
   return res.data;
